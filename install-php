@@ -1,0 +1,42 @@
+#!/bin/sh
+NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
+apk add  --no-cache --virtual .build-deps \
+  $PHPIZE_DEPS \
+  curl-dev \
+  imagemagick-dev \
+  libtool \
+  libxml2-dev \
+  sqlite-dev \
+  freetype-dev \
+  libjpeg-turbo-dev \
+  libpng-dev \
+  libmcrypt-dev \
+&& apk add --no-cache \
+  curl \
+  imagemagick \
+  freetype \
+  libpng \
+  libjpeg-turbo \
+  libmcrypt \
+&& pecl install imagick \
+&& pecl install redis-3.1.0 \
+&& docker-php-ext-enable redis imagick \
+&& docker-php-ext-install -j${NPROC} \
+  mcrypt \
+  iconv \
+  curl \
+  iconv \
+  mbstring \
+  pdo \
+  pdo_mysql \
+  pdo_sqlite \
+  pcntl \
+  tokenizer \
+  xml \
+  zip \
+&& docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+&& docker-php-ext-install -j${NPROC} \
+  gd \
+&& curl -s https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+&& chmod +x /usr/local/bin/composer \
+&& apk del -f .build-deps
