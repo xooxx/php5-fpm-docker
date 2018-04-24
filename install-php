@@ -33,6 +33,7 @@ NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
   pdo \
   pdo_mysql \
   pdo_sqlite \
+  mysqli \
   pcntl \
   tokenizer \
   xml \
